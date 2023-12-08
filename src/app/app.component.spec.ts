@@ -1,27 +1,58 @@
 import { TestBed } from '@angular/core/testing';
+import {
+  HttpTestingController,
+  HttpClientTestingModule,
+} from '@angular/common/http/testing';
+import * as userData from '../assets/json/userData.json';
+import * as userReposData from '../assets/json/userRepos.json';
+import { HttpClient } from '@angular/common/http';
+import { ApiService } from './services/api.service';
 import { AppComponent } from './app.component';
+import { CommonModule } from '@angular/common';
 
 describe('AppComponent', () => {
-  beforeEach(() => TestBed.configureTestingModule({
-    declarations: [AppComponent]
-  }));
+  let service: ApiService;
+  let httpController: HttpTestingController;
+  let httpClient: HttpClient;
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule, CommonModule],
+      providers: [ApiService],
+      declarations: [AppComponent],
+    });
+    service = TestBed.inject(ApiService);
+    httpController = TestBed.inject(HttpTestingController);
+    httpClient = TestBed.inject(HttpClient);
   });
 
-  it(`should have as title 'fyle-frontend-challenge'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('fyle-frontend-challenge');
+  // Service Test for UserData
+  it('should call getUser and return an object of user github data', () => {
+    const service: ApiService = TestBed.get(ApiService);
+    service.getUser('lovell').subscribe((res) => {
+      console.log('RES', res);
+      expect(res).toEqual(userData);
+    });
+    expect(service).toBeTruthy();
   });
 
-  it('should render title', () => {
+  // Service Test for UserRepos
+  it('should call getUser and return an object of user github data', () => {
+    const service: ApiService = TestBed.get(ApiService);
+    service.getUserRepos('lovell', 1).subscribe((res) => {
+      console.log('RES', res);
+      expect(res).toEqual(userReposData);
+    });
+    expect(service).toBeTruthy();
+  });
+
+  // Service Test for Component
+  it('should render title in a p tag', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('fyle-frontend-challenge app is running!');
+    const compiled = fixture.debugElement.nativeElement;
+    expect(compiled.querySelector('#mainTitle').textContent).toContain(
+      'Welcome to Git Hub'
+    );
   });
 });

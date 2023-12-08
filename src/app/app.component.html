@@ -1,5 +1,258 @@
-<div class="grid h-screen place-items-center">
-  <div class="font-bold text-3xl">
-    Fyle Internship Challenge
+<!-- If User Data Exists -->
+<div *ngIf="userData; else noUserData">
+  <div class="w-full h-auto">
+    <div
+      class="relative flex justify-center bg-[url('/assets/images/svg-bean.png')] w-full h-[200px] xl:h-[300px] bg-repeat-x"
+    >
+      <div
+        class="absolute flex bottom-[-40px] w-auto h-[200px] xl:w-[800px] xl:h-[300px] rounded-t-[32px] bg-[#f9f0f0] p-10 xl:p-10"
+      >
+        <!-- Start of User Data UI -->
+        <div class="relative w-2/4 xl:w-1/4 me-8">
+          <img
+            class="rounded-full w-[120px] xl:w-[250px]"
+            src="{{ userData.avatar_url }}"
+            alt=""
+          />
+          <div
+            class="absolute left-4 bottom-0 xl:bottom-10 xl:left-8 w-auto h-auto rounded-t-full rounded-bl-full bg-black pt-[4px] pb-[4px] ps-[8px] pe-[8px] xl:p-1"
+            *ngIf="userData.location; else nolocation"
+          >
+            <p class="text-white text-[10px] text-center font-semibold">
+              <span class="me-1"><i class="fa fa-map-marker"></i></span
+              >{{ userData.location }}
+            </p>
+          </div>
+          <ng-template #nolocation></ng-template>
+          <div *ngIf="userData.bio; else nobio" class="me-2 mt-3 xl:mt-3">
+            <p class="text-black font-semibold text-sm xl:text-lg text-center">
+              {{ userData.bio }}
+            </p>
+          </div>
+          <ng-template #nobio>
+            <div *ngIf="userData.blog" class="me-2 mt-3 xl:mt-3">
+              <p
+                class="text-black font-semibold text-sm xl:text-lg text-center"
+              >
+                {{ userData.blog }}
+              </p>
+            </div>
+          </ng-template>
+        </div>
+
+        <div class="w-2/4 xl:w-3/4 xl:p-[40px]">
+          <p class="text-black font-bold text-xl xl:text-4xl">
+            {{ userData.name }}
+          </p>
+          <div class="flex justify-start gap-4 mt-2">
+            <div>
+              <div
+                class="flex flex-col items-center"
+                *ngIf="userData.followers > 0; else nofollowers"
+              >
+                <p class="text-black text-sm xl:text-lg font-semibold mt-2">
+                  {{ userData.followers }}
+                </p>
+                <p class="text-black text-sm xl:text-lg font-semibold">
+                  Followers
+                </p>
+              </div>
+              <ng-template #nofollowers class="flex flex-col items-center">
+                <p
+                  class="text-black text-sm xl:text-lg font-semibold mt-2 text-center"
+                >
+                  0
+                </p>
+                <p class="text-black text-sm xl:text-lg font-semibold">
+                  Followers
+                </p>
+              </ng-template>
+            </div>
+            <div>
+              <div
+                class="flex flex-col items-center"
+                *ngIf="userData.public_repos > 0; else noRepos"
+              >
+                <p class="text-black text-sm xl:text-lg font-semibold mt-2">
+                  {{ userData.public_repos }}
+                </p>
+                <p class="text-black text-sm xl:text-lg font-semibold">Repos</p>
+              </div>
+              <ng-template #noRepos>
+                <p class="text-black text-sm xl:text-lg font-semibold mt-2">
+                  0
+                </p>
+                <p class="text-black text-sm xl:text-lg font-semibold">Repos</p>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+        <!-- End of User Data UI -->
+      </div>
+    </div>
+
+    <!-- User Repos Loading UI -->
+    <div
+      *ngIf="isLoading"
+      class="flex flex-col flex-wrap xl:flex xl:flex-row xl:flex-wrap justify-around p-[32px] mt-[52px] gap-1"
+    >
+      <div
+        *ngFor="let number of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"
+        class="w-auto xl:w-5/12 h-min bg-slate-200 rounded-lg p-[12px] mb-[32px]"
+      >
+        <div
+          class="w-full min-h-[230px] h-auto p-[22px] rounded-lg"
+          [ngStyle]="{
+            'background-color': '#f7fcec'
+          }"
+        >
+          <div class="flex justify-between gap-1">
+            <ngx-skeleton-loader
+              [theme]="{ width: '170px', 'border-radius': '0', height: '15px' }"
+            ></ngx-skeleton-loader>
+
+            <div
+              class="w-2/12 flex flex-col items-center bg-black h-[48px] pt-1 rounded-[8px]"
+            >
+              <i
+                class="fa fa-code-fork"
+                style="font-size: 24px; color: white"
+              ></i>
+              <ngx-skeleton-loader
+                [theme]="{
+                  width: '12px',
+                  'border-radius': '0',
+                  height: '10px'
+                }"
+              ></ngx-skeleton-loader>
+            </div>
+          </div>
+          <ngx-skeleton-loader
+            [theme]="{
+              width: '180px',
+              'border-radius': '0',
+              height: '30px'
+            }"
+          ></ngx-skeleton-loader>
+        </div>
+        <div>
+          <p>Tags:</p>
+          <div class="flex flex-row flex-wrap gap-2">
+            <ngx-skeleton-loader
+              [theme]="{
+                width: '50px',
+                'border-radius': '0',
+                height: '30px'
+              }"
+            ></ngx-skeleton-loader>
+            <ngx-skeleton-loader
+              [theme]="{
+                width: '50px',
+                'border-radius': '0',
+                height: '30px'
+              }"
+            ></ngx-skeleton-loader>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Repos Loaded UI -->
+    <div
+      *ngIf="!isLoading"
+      class="flex flex-col flex-wrap xl:flex xl:flex-row xl:flex-wrap justify-around p-[32px] mt-[52px] gap-1"
+    >
+      <div
+        class="w-auto xl:w-5/12 h-min bg-slate-200 rounded-lg p-[12px] mb-[32px]"
+        *ngFor="
+          let userRepo of userRepos
+            | paginate
+              : { itemsPerPage: 10, currentPage: p, totalItems: totalRepos }
+        "
+      >
+        <div
+          class="w-full min-h-[230px] h-auto p-[22px] rounded-lg"
+          [ngStyle]="{
+            'background-color':
+              userRepo.watchers_count > 100 ? '#f7fcec' : '#fef4e3'
+          }"
+        >
+          <div class="flex justify-between gap-1">
+            <p class="text-black text-lg xl:text-2xl w-10/12">
+              {{ userRepo.name }}
+            </p>
+            <div
+              class="w-2/12 flex flex-col items-center bg-black h-[50px] pt-1 rounded-[8px]"
+            >
+              <i
+                class="fa fa-code-fork"
+                style="font-size: 24px; color: white"
+              ></i>
+              <p class="text-[8px] xl:text-[16px] text-white font-bold">
+                {{ userRepo.forks_count }}
+              </p>
+            </div>
+          </div>
+          <p class="mt-[12px] font-semibold text-sm leading-relaxed">
+            {{ userRepo.description }}
+          </p>
+        </div>
+        <div>
+          <p>Tags:</p>
+          <div *ngIf="!userRepo.topics.length">N/A</div>
+          <div class="flex flex-row flex-wrap gap-2">
+            <div
+              class="w-auto h-auto bg-black mt-[8px] min-w-[60px] text-center p-1 rounded-md"
+              *ngFor="let topic of userRepo.topics"
+            >
+              <p class="text-white font-sm">{{ topic }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination for User Repos -->
+    <div class="flex justify-center mb-2">
+      <pagination-controls
+        (pageChange)="pageChanged($event)"
+        class="w-auto bg-slate-100 text-white mb-0 text-[12px]"
+      ></pagination-controls>
+    </div>
   </div>
+</div>
+
+<!-- No User Data UI -->
+<div>
+  <ng-template #noUserData>
+    <div
+      class="flex flex-col items-center justify-center bg-black w-full h-[100vh]"
+    >
+      <p
+        class="text-white text-2xl xl:text-4xl text-bold text-center"
+        id="mainTitle"
+      >
+        Welcome to Git Hub
+      </p>
+      <div class="w-[200px] xl:w-[400px] mt-[32px]">
+        <form (submit)="onSubmit($event, github.value)">
+          <!-- <input [(ngModel)]="playerName" /> -->
+          <input
+            #github
+            type="text"
+            class="rounded-lg w-full"
+            name="githubUserName"
+            ng-model
+          />
+          <button
+            type="submit"
+            class="text-white rounded-lg bg-slate-500 w-auto h-auto p-1 xl:p-2 mt-5 ms-[72px] xl:ms-[152px]"
+          >
+            <!-- (click)="eventhandling('profile')" -->
+            Search
+          </button>
+        </form>
+      </div>
+    </div>
+  </ng-template>
 </div>
